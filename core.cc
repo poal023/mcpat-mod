@@ -37,10 +37,12 @@
 #include <algorithm>
 #include "XML_Parse.h"
 #include <string>
+#include <sstream>
 #include <cmath>
 #include <assert.h>
+#include <string> 
 #include "core.h"
-//#include "globalvar.h"
+#include "globalvar.h"
 
 InstFetchU::InstFetchU(ParseXML* XML_interface, int ithCore_, InputParameter* interface_ip_, const CoreDynParam & dyn_p_, bool exist_)
 :XML(XML_interface),
@@ -263,7 +265,7 @@ InstFetchU::InstFetchU(ParseXML* XML_interface, int ithCore_, InputParameter* in
     	  interface_ip.num_rd_ports    = coredynp.predictionW;
     	  interface_ip.num_wr_ports    = coredynp.predictionW;
     	  interface_ip.num_se_rd_ports = 0;
-    	  BTB = new ArrayST(&interface_ip, "Branch Target Buffer", Core_device, coredynp.opt_local, coredynp.core_ty);
+    	  BTB = new ArrayST(&interface_ip, "BTB", Core_device, coredynp.opt_local, coredynp.core_ty);
     	  BTB->area.set_area(BTB->area.get_area()+ BTB->local_result.area);
     	  area.set_area(area.get_area()+ BTB->local_result.area);
     	  ///cout<<"area="<<area<<endl;
@@ -357,7 +359,7 @@ BranchPredictor::BranchPredictor(ParseXML* XML_interface, int ithCore_, InputPar
 	interface_ip.num_rd_ports    = coredynp.predictionW;
 	interface_ip.num_wr_ports    = coredynp.predictionW;
 	interface_ip.num_se_rd_ports = 0;
-	globalBPT = new ArrayST(&interface_ip, "Global Predictor", Core_device, coredynp.opt_local, coredynp.core_ty);
+	globalBPT = new ArrayST(&interface_ip, "GlobalPred", Core_device, coredynp.opt_local, coredynp.core_ty);
 	globalBPT->area.set_area(globalBPT->area.get_area()+ globalBPT->local_result.area);
 	area.set_area(area.get_area()+ globalBPT->local_result.area);
 
@@ -378,7 +380,7 @@ BranchPredictor::BranchPredictor(ParseXML* XML_interface, int ithCore_, InputPar
 	interface_ip.num_rd_ports    = coredynp.predictionW;
 	interface_ip.num_wr_ports    = coredynp.predictionW;
 	interface_ip.num_se_rd_ports = 0;
-	L1_localBPT = new ArrayST(&interface_ip, "L1 local Predictor", Core_device, coredynp.opt_local, coredynp.core_ty);
+	L1_localBPT = new ArrayST(&interface_ip, "L1Pred", Core_device, coredynp.opt_local, coredynp.core_ty);
 	L1_localBPT->area.set_area(L1_localBPT->area.get_area()+ L1_localBPT->local_result.area);
 	area.set_area(area.get_area()+ L1_localBPT->local_result.area);
 
@@ -399,7 +401,7 @@ BranchPredictor::BranchPredictor(ParseXML* XML_interface, int ithCore_, InputPar
 	interface_ip.num_rd_ports    = coredynp.predictionW;
 	interface_ip.num_wr_ports    = coredynp.predictionW;
 	interface_ip.num_se_rd_ports = 0;
-	L2_localBPT = new ArrayST(&interface_ip, "L2 local Predictor", Core_device, coredynp.opt_local, coredynp.core_ty);
+	L2_localBPT = new ArrayST(&interface_ip, "L2Pred", Core_device, coredynp.opt_local, coredynp.core_ty);
 	L2_localBPT->area.set_area(L2_localBPT->area.get_area()+ L2_localBPT->local_result.area);
 	area.set_area(area.get_area()+ L2_localBPT->local_result.area);
 
@@ -420,7 +422,7 @@ BranchPredictor::BranchPredictor(ParseXML* XML_interface, int ithCore_, InputPar
 	interface_ip.num_rd_ports    = coredynp.predictionW;
 	interface_ip.num_wr_ports    = coredynp.predictionW;
 	interface_ip.num_se_rd_ports = 0;
-	chooser = new ArrayST(&interface_ip, "Predictor Chooser", Core_device, coredynp.opt_local, coredynp.core_ty);
+	chooser = new ArrayST(&interface_ip, "PredChooser", Core_device, coredynp.opt_local, coredynp.core_ty);
 	chooser->area.set_area(chooser->area.get_area()+ chooser->local_result.area);
 	area.set_area(area.get_area()+ chooser->local_result.area);
 
@@ -897,7 +899,7 @@ LoadStoreU::LoadStoreU(ParseXML* XML_interface, int ithCore_, InputParameter* in
 	  interface_ip.num_wr_ports        = XML->sys.core[ithCore].memory_ports;
 	  interface_ip.num_se_rd_ports     = 0;
 	  interface_ip.num_search_ports    =XML->sys.core[ithCore].memory_ports;
-	  LSQ = new ArrayST(&interface_ip, "Load(Store)Queue", Core_device, coredynp.opt_local, coredynp.core_ty);
+	  LSQ = new ArrayST(&interface_ip, "LoadStoreQueue", Core_device, coredynp.opt_local, coredynp.core_ty);
 	  LSQ->area.set_area(LSQ->area.get_area()+ LSQ->local_result.area);
 	  area.set_area(area.get_area()+ LSQ->local_result.area);
 	  //output_data_csv(LSQ.LSQ.local_result);
@@ -1048,7 +1050,7 @@ RegFU::RegFU(ParseXML* XML_interface, int ithCore_, InputParameter* interface_ip
 	interface_ip.num_rd_ports    = 2*coredynp.peak_issueW;
 	interface_ip.num_wr_ports    = coredynp.peak_issueW;
 	interface_ip.num_se_rd_ports = 0;
-	IRF = new ArrayST(&interface_ip, "Integer Register File", Core_device, coredynp.opt_local, coredynp.core_ty);
+	IRF = new ArrayST(&interface_ip, "IntRegFile", Core_device, coredynp.opt_local, coredynp.core_ty);
 	IRF->area.set_area(IRF->area.get_area()+ IRF->local_result.area*coredynp.num_pipelines*cdb_overhead*((coredynp.scheu_ty==ReservationStation)?XML->sys.core[ithCore].number_hardware_threads:1));
 	area.set_area(area.get_area()+ IRF->local_result.area*coredynp.num_pipelines*cdb_overhead*((coredynp.scheu_ty==ReservationStation)?XML->sys.core[ithCore].number_hardware_threads:1));
 	//area.set_area(area.get_area()*cdb_overhead);
@@ -1075,7 +1077,7 @@ RegFU::RegFU(ParseXML* XML_interface, int ithCore_, InputParameter* interface_ip
 	interface_ip.num_rd_ports    = 2*XML->sys.core[ithCore].issue_width;
 	interface_ip.num_wr_ports    = XML->sys.core[ithCore].issue_width;
 	interface_ip.num_se_rd_ports = 0;
-	FRF = new ArrayST(&interface_ip, "Floating point Register File", Core_device, coredynp.opt_local, coredynp.core_ty);
+	FRF = new ArrayST(&interface_ip, "FPRegFile", Core_device, coredynp.opt_local, coredynp.core_ty);
 	FRF->area.set_area(FRF->area.get_area()+ FRF->local_result.area*coredynp.num_fp_pipelines*cdb_overhead*((coredynp.scheu_ty==ReservationStation)?XML->sys.core[ithCore].number_hardware_threads:1));
 	area.set_area(area.get_area()+ FRF->local_result.area*coredynp.num_fp_pipelines*cdb_overhead*((coredynp.scheu_ty==ReservationStation)?XML->sys.core[ithCore].number_hardware_threads:1));
 	//area.set_area(area.get_area()*cdb_overhead);
@@ -1980,6 +1982,9 @@ void BranchPredictor::computeEnergy(bool is_tdp)
 	chooser->power_t.reset();
 	RAS->power_t.reset();
 
+	std::ostringstream sstream;
+	char *cstr;
+
     globalBPT->power_t.readOp.dynamic   +=  globalBPT->local_result.power.readOp.dynamic*globalBPT->stats_t.readAc.access +
                 globalBPT->stats_t.writeAc.access*globalBPT->local_result.power.writeOp.dynamic;
     L1_localBPT->power_t.readOp.dynamic   +=  L1_localBPT->local_result.power.readOp.dynamic*L1_localBPT->stats_t.readAc.access +
@@ -1995,6 +2000,11 @@ void BranchPredictor::computeEnergy(bool is_tdp)
 
     if (is_tdp)
     {
+        /*
+        sstream << globalBPT->local_result.power.readOp.dynamic;
+	std::string store_ss = sstream.str(); 
+	globalBPT_ae.addAttribute("Read AE", store_ss.c_str());
+	*/
     	globalBPT->power = globalBPT->power_t + globalBPT->local_result.power*pppm_lkg;
     	L1_localBPT->power = L1_localBPT->power_t + L1_localBPT->local_result.power*pppm_lkg;
     	L2_localBPT->power = L2_localBPT->power_t + L2_localBPT->local_result.power*pppm_lkg;

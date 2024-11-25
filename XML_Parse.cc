@@ -33,10 +33,26 @@
 #include <stdio.h>
 #include "xmlParser.h"
 #include <string>
+#include <sstream>
 #include "XML_Parse.h"
+#include "globalvar.h"
 #include <iostream>
 
 using namespace std;
+
+void dump_ae_to_xml(double ae, std::string component, std::string ae_type, std::ostringstream* ss) {
+	std::string tmp; 
+	XMLNode local_comp = dynHeader.getChildNode(component.c_str(),0);
+	if (local_comp.isEmpty()) {
+		local_comp = dynHeader.addChild(component.c_str());
+	}
+	*ss << ae;
+	tmp = ss->str();
+	local_comp.addAttribute(ae_type.c_str(), tmp.c_str());
+	ss->clear();
+	ss->str(std::string());
+
+}
 
 void ParseXML::parse(char* filepath)
 {

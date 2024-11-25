@@ -40,6 +40,7 @@
 #endif
 
 EXTERN bool opt_for_clk;
+EXTERN XMLNode dynHeader;
 
 #endif /* GLOBALVAR_H_ */
 

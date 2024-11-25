@@ -30,6 +30,7 @@
  ***************************************************************************/
 
 #include "logic.h"
+#include <sstream>
 
 
 //selection_logic
@@ -569,6 +570,8 @@ void FunctionalUnit::computeEnergy(bool is_tdp)
 {
 	double pppm_t[4]    = {1,1,1,1};
 	double FU_duty_cycle;
+	std::string fu_name;
+	std::ostringstream sstream; 
 	if (is_tdp)
 	{
 
@@ -616,26 +619,36 @@ void FunctionalUnit::computeEnergy(bool is_tdp)
 	{
 		if (fu_type == FPU)
 		{
+			fu_name = "FpAlu";
+			std::cout << "FpAlu:" << std::endl;
 			stats_t.readAc.access = XML->sys.core[ithCore].fpu_accesses;
 			rtp_stats = stats_t;
 		}
 		else if (fu_type == ALU)
 		{
+			fu_name = "IntAlu";
+			std::cout << "IntAlu:" << std::endl;
 			stats_t.readAc.access = XML->sys.core[ithCore].ialu_accesses;
 			rtp_stats = stats_t;
 		}
 		else if (fu_type == MUL)
 		{
+			fu_name = "MulAlu";
+			std::cout << "MulAlu:" << std::endl;
 			stats_t.readAc.access = XML->sys.core[ithCore].mul_accesses;
 			rtp_stats = stats_t;
 		}
 
 	    //rt_power.readOp.dynamic = base_energy*executionTime + energy*stats_t.readAc.access;
 	    rt_power.readOp.dynamic = per_access_energy*stats_t.readAc.access + base_energy*executionTime;
+	    std::cout << "Per access energy: " << per_access_energy << std::endl;
+	    std::cout << "P/A energy * sckRation = " << per_access_energy*g_tp.sckt_co_eff << std::endl;
 		double sckRation = g_tp.sckt_co_eff;
 		rt_power.readOp.dynamic *= sckRation;
 		rt_power.writeOp.dynamic *= sckRation;
 		rt_power.searchOp.dynamic *= sckRation;
+
+		dump_ae_to_xml(per_access_energy*sckRation, fu_name, "Read", &sstream);  
 
 	}
 

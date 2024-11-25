@@ -821,6 +821,7 @@ void SharedCache::computeEnergy(bool is_tdp)
 							unicache.ifb->local_result.power +
 							unicache.prefetchb->local_result.power +
 							unicache.wbb->local_result.power)*pppm_lkg;
+			output_UCA(&unicache.caches->local_result);
 		}
 		rt_power     = rt_power + unicache.rt_power;
 	}
@@ -832,6 +833,10 @@ void SharedCache::displayEnergy(uint32_t indent,bool is_tdp)
 	string indent_str_next(indent+2, ' ');
 	bool long_channel = XML->sys.longer_channel_device;
 	bool power_gating = XML->sys.power_gating;
+	//output_UCA(&unicache.caches->local_result);
+	//std::cout << "DA #1 " << unicache.caches->local_result.data_array.access_time << std::endl;
+	//std::cout << "TA #1 " << unicache.caches->local_result.tag_array.access_time << std::endl;
+	//std::cout << "DA #2 " << unicache.caches->local_result.data_array2->access_time << std::endl;
 
 	if (is_tdp)
 	{
@@ -1068,6 +1073,9 @@ void SharedCache::set_cache_param()
 		cachep.nbanks        = XML->sys.L2[ithCache].L2_config[3];
 		cachep.throughput    = XML->sys.L2[ithCache].L2_config[4]/cachep.clockRate;
 		cachep.latency       = XML->sys.L2[ithCache].L2_config[5]/cachep.clockRate;
+		for(int i = 0; i < 6; i++){
+			std::cout << "Cache config: " << XML->sys.L2[ithCache].L2_config[i] << std::endl;
+		}
 		cachep.missb_size    = XML->sys.L2[ithCache].buffer_sizes[0];
 		cachep.fu_size       = XML->sys.L2[ithCache].buffer_sizes[1];
 		cachep.prefetchb_size= XML->sys.L2[ithCache].buffer_sizes[2];

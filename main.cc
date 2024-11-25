@@ -36,8 +36,10 @@
 #include "globalvar.h"
 #include "version.h"
 
+XMLNode dynamicEnergies = XMLNode::createXMLTopNode("xml", TRUE);
 
 using namespace std;
+
 
 void print_usage(char * argv0);
 
@@ -84,10 +86,15 @@ int main(int argc,char *argv[])
 		<< " of " << VER_UPDATE << ") is computing the target processor...\n "<<endl;
 
 	//parse XML-based interface
+	dynamicEnergies.addAttribute("version", "1.0");
+	dynHeader = dynamicEnergies.addChild("activation_energies");
 	ParseXML *p1= new ParseXML();
 	p1->parse(fb);
 	Processor proc(p1);
 	proc.displayEnergy(2, plevel);
+
+	dynamicEnergies.writeToFile("activation_energies.xml");
+
 	delete p1;
 	return 0;
 }

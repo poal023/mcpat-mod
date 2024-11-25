@@ -35,12 +35,15 @@
 #include "parameter.h"
 #include "array.h"
 #include <iostream>
+#include <sstream>
+#include <algorithm>
 #include <math.h>
 #include <assert.h>
 #include "globalvar.h"
 
 using namespace std;
 
+std::ostringstream sstream;
 ArrayST::ArrayST(const InputParameter *configure_interface,
 		               string _name,
 		               enum Device_ty device_ty_,
@@ -59,6 +62,12 @@ ArrayST::ArrayST(const InputParameter *configure_interface,
 	if (l_ip.power_gating && (l_ip.assoc==0)) {l_ip.power_gating = false;}
 	l_ip.error_checking();//not only do the error checking but also fill some missing parameters
 	optimize_array();
+	std::replace(name.begin(), name.end(), ' ', '_');
+	dump_ae_to_xml(local_result.power.readOp.dynamic, name, "Read", &sstream);
+	dump_ae_to_xml(local_result.power.writeOp.dynamic, name, "Write", &sstream);
+	dump_ae_to_xml(local_result.power.searchOp.dynamic, name, "Search", &sstream);
+	//std::cout << "Name of this is: " << name << std::endl;
+	//std::cout << "AE: " << local_result.power.readOp.dynamic << std::endl;
 
 }
 

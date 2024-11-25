@@ -50,6 +50,8 @@ ToXMLStringTool tx,tx2;
 //all subnodes at the level of system.core(0-n)
 //cache_policy is added into cache property arrays;//0 no write or write-though with non-write allocate;1 write-back with write-allocate
 
+void dump_ae_to_xml(double ae, std::string component, std::string ae_type, std::ostringstream* ss);
+
 typedef struct{
 	int prediction_width;
 	char prediction_scheme[20];
